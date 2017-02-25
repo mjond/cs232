@@ -1,32 +1,38 @@
 #!/bin/sh
 
-filename='computers.txt'
-filelines=`cat $filename`
-shutdown="No route to host"
-windows="Connection timed out"
+#Mark Davis   mjd85
+#project 2, CS232
+#Shell Scripting
 
-for line in $filelines ; do
-	echo
-	echo $line
-	output=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 $line "uname && users && exit")
-	echo "$output"
+filename='computers.txt' #file to store machine names
+filelines=`cat $filename` #read out the lines
+shutdown="No route to host" #substring to verify if machine is turned off
+windows="Connection timed out" #substring to verify if machine is running windows
 
-	#case "$shutdown" in
-	#	*$output*) echo "Machine turned off" ;;
-	#esac
+for line in $filelines ; do #loop through file containing machine names
+	echo #whitespace
+	echo #whitespace
+	echo $line #output the machine name
 
-	#case "windows" in
-	#	*$output*) echo "Maching is running WINDOWS" ;;
-	#esac
+	output=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 $line "users && exit") 2> sshError.txt #ssh the machine and put error messages in txt file
+	read error < sshError.txt #read error messages to a variable
 
-	if echo "$output" | grep -q "$shutdown"
+	if echo "$error" | grep -q "$shutdown" #if the 'No route to host' message is in the error messaage,
 	then
-		echo "Machine is off"
-	fi
-
-	if echo "$output" | grep -q "$windows"
-	then
-		echo "Machine is running Windows"
+		echo "Machine is turned OFF" #then the computer is turned off
+	else
+		echo "Machine is turned ON" #else the machine is turned on, 
+		if echo "$error" | grep -q "$windows" #if the 'Connection timed out' message is in the error message
+		then
+			echo "Machine is running WINDOWS" #output if it is in windows
+		else
+			echo "Machine is running GNU/LINUX" #else, output GNU/Linux
+			if [ -z "$output" -a -z "$error" ]; then #if the error message is empty and the output is empty,
+				echo "No users logged on" #there are no users logged on
+		    else
+				echo "User is logged on" #else there are users logged on
+			fi
+		fi
 	fi
 
 done
