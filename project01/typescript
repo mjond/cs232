@@ -1,0 +1,171 @@
+Script started on Wed 15 Feb 2017 03:45:18 PM EST
+mjd85@sutherland:~/Documents/cs232/project01$ ls
+analysis.txt  a.out  grading.txt  main	main.c	typescript
+mjd85@sutherland:~/Documents/cs232/project01$ car   t a main.c
+/*
+CS232, Project 1 - System Calls
+Mark Davis  mjd85
+February 8, 2017
+*/
+
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <string.h>
+#include <stdbool.h>
+
+char *message = "msg"; //variable for message
+char *control = "ctrl-c doesn't work"; //variable for when cntrl-c is pressed
+bool interrupt = false; //variable for interruptsll
+int time = 5; //variable for time
+
+/*
+Author: Mark Davis
+parameter: sign, this function requires an int to be passed
+return: void
+function: print out the message and wait the default amount of time or the amount specified by user
+*/
+void handleAlarm(int sign) {
+	printf("%s\n", message);
+	alarm(time);
+}
+
+/*
+Author: Mark Davis
+parameter: sign, this function requires an int to be passed
+return: void
+function: print out the message
+*/
+void sigintHandler(int sign) {
+	printf("%s\n", control);
+}
+
+/*
+Author: Mark Davis
+parameter: argc, number of arguments on command line
+		   argv, array containing the arguments
+return: 0
+function: loop through command line parameters and assign values
+		  print message with a pause in between messages
+		  be able to turn interrupts on and off
+*/
+int main(int argc, char *argv[])
+{
+	if (argc < 1) //if there are no arguments
+		return 0; //quit the program
+	
+	//loop through command line arguments to find values
+	for (int i = 0; i < argc ; i++) {
+		if(strcmp(argv[i], "+i") == 0) { //if interrupts are on
+			interrupt = true; //set interrupt to 1 for 'on'
+		}
+		if(strcmp(argv[i], "-i") == 0) { //if interrupts are off
+			interrupt = false; //set interrupt to 0 for 'off'
+		}
+		if(strcmp(argv[i], "+t") == 0) { //switch for time
+			time = atoi(argv[i+1]); //assign value of argument in front of the time switch
+		}
+		if(strcmp(argv[i], "-m") == 0) { //switch for alternate message
+			message = argv[i+1]; //assign value of argument in front of the message switch
+		}
+	}
+	printf("%s\n", message);
+	printf("%d\n", interrupt);
+	printf("%d\n", time);
+
+	if (interrupt) {
+		signal(SIGINT, sigintHandler);
+	}
+
+	signal(SIGALRM, handleAlarm); //bind the handler to the signal
+
+	//loop for sending the anoying message
+	for(;;) {
+		alarm(time);
+		pause();
+	}
+
+	return 0;
+}
+
+mjd85@sutherland:~/Documents/cs232/project01$ cat analysis.txt
+execve("./a.out", ["./a.out"], [/* 70 vars */]) = 0
+brk(NULL)                               = 0x15f5000
+
+	brk() change the location of the program break
+
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f83d585b000
+
+	mmap() creates a new mapping in the virtual address space of the calling process. 
+
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+
+	access() checks whether the calling process can access the file path
+
+open("/usr/local/cuda-8.0/lib64/tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+
+	open()  will  find  the  first available virtual terminal, and run on it the given command with the given command options, standard input, output and error are
+       directed to that terminal.
+
+stat("/usr/local/cuda-8.0/lib64/tls/x86_64", 0x7ffd0e750810) = -1 ENOENT (No such file or directory)
+
+	stat() displays a file or a file system status
+
+open("/usr/local/cuda-8.0/lib64/tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat("/usr/local/cuda-8.0/lib64/tls", 0x7ffd0e750810) = -1 ENOENT (No such file or directory)
+open("/usr/local/cuda-8.0/lib64/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat("/usr/local/cuda-8.0/lib64/x86_64", 0x7ffd0e750810) = -1 ENOENT (No such file or directory)
+open("/usr/local/cuda-8.0/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat("/usr/local/cuda-8.0/lib64", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+open("tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+open("tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+open("x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+open("libc.so.6", O_RDONLY|O_CLOEXEC)   = -1 ENOENT (No such file or directory)
+mjd85@sutherland:~/Documents/cs232/project01$ cat g     gcc -o main main.c
+mjd85@sutherland:~/Documents/cs232/project01$ ./main
+msg
+0
+5
+msg
+msg
+^C
+mjd85@sutherland:~/Documents/cs232/project01$ ./main +i +t 1
+msg
+1
+1
+msg
+msg
+msg
+msg
+msg
+msg
+^Cctrl-c doesn't work
+msg
+^Z
+[1]+  Stopped                 ./main +i +t 1
+mjd85@sutherland:~/Documents/cs232/project01$ ./main -i -m newMessage
+newMessage
+0
+5
+newMessage
+newMessage
+^C
+mjd85@sutherland:~/Documents/cs232/project01$ ./main +i +t     -m THISISANEWMESSAGE
+THISISANEWMESSAGE
+0
+5
+THISISANEWMESSAGE
+THISISANEWMESSAGE
+^C
+mjd85@sutherland:~/Documents/cs232/project01$ exit
+There are stopped jobs.
+mjd85@sutherland:~/Documents/cs232/project01$ ps
+  PID TTY          TIME CMD
+27988 pts/11   00:00:00 bash
+28003 pts/11   00:00:00 main
+28013 pts/11   00:00:00 ps
+mjd85@sutherland:~/Documents/cs232/project01$ exit
+
+Script done on Wed 15 Feb 2017 03:48:55 PM EST

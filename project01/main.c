@@ -17,7 +17,10 @@ bool interrupt = false; //variable for interruptsll
 int time = 5; //variable for time
 
 /*
-
+Author: Mark Davis
+parameter: sign, this function requires an int to be passed
+return: void
+function: print out the message and wait the default amount of time or the amount specified by user
 */
 void handleAlarm(int sign) {
 	printf("%s\n", message);
@@ -25,14 +28,23 @@ void handleAlarm(int sign) {
 }
 
 /*
-
+Author: Mark Davis
+parameter: sign, this function requires an int to be passed
+return: void
+function: print out the message
 */
 void sigintHandler(int sign) {
 	printf("%s\n", control);
 }
 
 /*
-
+Author: Mark Davis
+parameter: argc, number of arguments on command line
+		   argv, array containing the arguments
+return: 0
+function: loop through command line parameters and assign values
+		  print message with a pause in between messages
+		  be able to turn interrupts on and off
 */
 int main(int argc, char *argv[])
 {

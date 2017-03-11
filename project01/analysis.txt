@@ -1,0 +1,33 @@
+execve("./a.out", ["./a.out"], [/* 70 vars */]) = 0
+brk(NULL)                               = 0x15f5000
+
+	brk() change the location of the program break
+
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f83d585b000
+
+	mmap() creates a new mapping in the virtual address space of the calling process. 
+
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+
+	access() checks whether the calling process can access the file path
+
+open("/usr/local/cuda-8.0/lib64/tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+
+	open()  will  find  the  first available virtual terminal, and run on it the given command with the given command options, standard input, output and error are
+       directed to that terminal.
+
+stat("/usr/local/cuda-8.0/lib64/tls/x86_64", 0x7ffd0e750810) = -1 ENOENT (No such file or directory)
+
+	stat() displays a file or a file system status
+
+open("/usr/local/cuda-8.0/lib64/tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat("/usr/local/cuda-8.0/lib64/tls", 0x7ffd0e750810) = -1 ENOENT (No such file or directory)
+open("/usr/local/cuda-8.0/lib64/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat("/usr/local/cuda-8.0/lib64/x86_64", 0x7ffd0e750810) = -1 ENOENT (No such file or directory)
+open("/usr/local/cuda-8.0/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat("/usr/local/cuda-8.0/lib64", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+open("tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+open("tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+open("x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+open("libc.so.6", O_RDONLY|O_CLOEXEC)   = -1 ENOENT (No such file or directory)
