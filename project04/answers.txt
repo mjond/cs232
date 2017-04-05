@@ -1,0 +1,11 @@
+Mark Davis
+April 5, 2017
+Process Synchronization Answers
+
+1. Does your program run the same way each time? Why?
+
+No, the program does not run the same way each time because the threads are in race conditions and will race differently each time the program is run.
+
+2. Give your last customer thread the highest priority. Does this ensure that this customer is always given first priority? Why or why not?
+
+No, the highest priority given to the last customer thread does not ensure that this customer is always given first priority. Some higher priority threads can wait behind a lower priority thread if the lower thread holds a lock/semaphore that the higher priority thread is waiting for.
