@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 public class CaesarCipherClient {
 
 	/*
-	 * runs the server
+	 * gets user input and sends to the server
 	*/
 	public static void main(String[] args) throws IOException {
 
@@ -27,8 +27,16 @@ public class CaesarCipherClient {
 		//open socket
 		Socket myClient = new Socket(hostName, portNumber);
 
+		OutputStream outStream = myClient.getOutputStream();
 		//open PrintWriter
-		PrintWriter out = new PrintWriter(myClient.getOutputStream(), true);
+		PrintWriter out = new PrintWriter(outStream, true);
+
+		//get user input
+		Scanner userInput = new Scanner(System.in);
+		int rotation = userInput.nextInt();
+
+		out.append(rotation.toString());
+		out.flush();
 
 		//   can't get DataOutputStream to work...
 		/*
@@ -48,20 +56,22 @@ public class CaesarCipherClient {
 		*/
 
 		//read in response
-		BufferedReader in =
-        new BufferedReader(
+		BufferedReader in = new BufferedReader(
             new InputStreamReader(myClient.getInputStream()));
-        BufferedReader stdIn =
-        new BufferedReader(
-            new InputStreamReader(System.in));
 
         //get user input
-		String userInput;
-		while ((userInput = stdIn.readLine()) != "quit") {
-    		out.println(userInput);
-    		System.out.println("echo: " + in.readLine());
-		}
+		String input;
+		while (true) {
+			input = getInput.nextLine();
+    		if (userInput.equals("quit")) {
+    			break;
+    		}
+    		out.append(userInput);
+    		out.flush();
+    		System.out.println("user input is: " + input);
 
+    		input = in.readLine();
+		}
 
         myClient.close();
 		
